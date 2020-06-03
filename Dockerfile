@@ -1,6 +1,6 @@
-FROM alpine:3.8
+FROM alpine:3
 
-ARG LUFI_VERSION=0.03.5
+ARG LUFI_VERSION=master
 
 ENV GID=991 \
     UID=991 \
@@ -29,6 +29,7 @@ RUN apk add --update --no-cache --virtual .build-deps \
                 libidn-dev \
                 postgresql-dev \
                 wget \
+                mariadb-dev \
     && apk add --update --no-cache \
                 libressl \
                 perl \
@@ -43,7 +44,8 @@ RUN apk add --update --no-cache --virtual .build-deps \
     && cpan install Carton \
     && git clone -b ${LUFI_VERSION} https://framagit.org/luc/lufi.git /usr/lufi \
     && cd /usr/lufi \
-    && echo "requires ''Mojo::mysql';" >> /usr/lufi/cpanfile \
+    && echo "requires 'Mojo::mysql';" >> /usr/lufi/cpanfile \
+    && echo "requires 'Mojolicious::Commands';" >> /usr/lufi/cpanfile \
     && rm -rf cpanfile.snapshot \
     && carton install \
     && apk del .build-deps \
